@@ -1,73 +1,50 @@
 
+import java.util.ArrayList;
+import java.util.List;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
-
-public class task1 {
+public class Task1 {
     public static void main(String[] args){
-        short[] numbers = GetNumbers(args[0]);
-        float max = GetMax(numbers); //Можно обойтись и без этих методов,
-        float min = GetMin(numbers); //так как массив уже отсортирован
-        float avg = GetAvg(numbers);
-        float perc90 = Percentile(numbers,90);
-        float med = Percentile(numbers, 50);
-        System.out.printf("%.2f\n%.2f\n%.2f\n%.2f\n%.2f\n",perc90,med,max,min,avg);
-        /*System.out.printf("%.2f\n%.2f\n%.2f\n%.2f\n%.2f\n",perc90,med,(float)numbers[numbers.length-1],(float)numbers[0],avg);
-        Альтернативный вариант вывода без вычисления max и min
-         */
-    }
-    static short[] GetNumbers(String path){
-        short[] numbers = new short[1000];
-        int i =0;
-        try(FileReader reader = new FileReader(path)){
-            Scanner scan = new Scanner(reader);
+        int n=0, m=0, k=0, i=0;
+         try {
+             n = Integer.parseInt(args[0]);
+             m = Integer.parseInt(args[1]);
+        }
+        catch (NumberFormatException e){
+            System.err.println("Invalid input data!");
+        }
+        catch (ArrayIndexOutOfBoundsException ex){
+            System.err.println("No input data!");
+        }
 
-            while (scan.hasNextShort())
-            {
-                numbers[i]=scan.nextShort();
+        int[] arr = GetArray(n);
+        int[] step = new int[m];
+        List<Integer> result = new ArrayList<>();
+        do {
+            if (i > n-1)
+                i=0;
+            if (k < m-1){
+                step[k] = arr[i];
                 i++;
+                k++;
             }
-            scan.close();
+            else {
+                result.add(step[0]);
+                step[k] = arr[i];
+                k=0;
+            }
+
+        } while (step[m-1] != arr[0]);
+
+        for (int j:
+                result) {
+            System.out.print(j);
         }
-        catch (IOException ex){
-            System.out.println(ex.getMessage());
+    }
+    static int[] GetArray(int n){
+        int[] arr = new int[n];
+        for (int i = 0; i < n; i++) {
+            arr[i] = i+1;
         }
-        if (i<1000)
-            numbers = Arrays.copyOf(numbers,i);
-        Arrays.sort(numbers);
-        return numbers;
-    }
-    static float GetMax(short[] nums){
-        float max = nums[0];
-        for(int n =1; n< nums.length; n++)
-        {
-            if (nums[n]>max)
-                max=nums[n];
-        }
-        return max;
-    }
-    static float GetMin(short[] nums) {
-        float min = nums[0];
-        for (int n = 1; n < nums.length; n++)
-        {
-            if (nums[n] < min)
-                min = nums[n];
-        }
-        return min;
-    }
-    static float GetAvg(short[] nums){
-        float sum=0;
-        for (int n=0; n<nums.length;n++)
-            sum+=nums[n];
-        float avg = sum/ nums.length;
-        return avg;
-    }
-    static float Percentile(short[] nums, float p){
-        float n=p/100*(nums.length-1)+1; //Получаем порядковый номер числа в массиве
-        float perc = nums[(int)n-1] + (n-(int)n)*(nums[(int)n]-nums[(int)n-1]);
-        return perc;
+        return arr;
     }
 }
-
